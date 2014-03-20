@@ -5,9 +5,6 @@ class FeaturePresentation(sublime_plugin.TextCommand):
 
 		activated = self.view.settings().get('infocus')
 
-		if activated == None:
-			self.view.settings().set('infocus', False)
-
 		for region in self.view.sel():
 			regions = []
 
@@ -21,8 +18,11 @@ class FeaturePresentation(sublime_plugin.TextCommand):
 
 			regions = [tr,br]
 
+			if activated == None:
+				self.view.fold(regions)
+				self.view.settings().set('infocus', True)
 
-			if activated == False or None:
+			if activated == False:
 				self.view.fold(regions)
 				self.view.settings().set('infocus', True)
 
