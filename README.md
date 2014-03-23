@@ -12,7 +12,7 @@ To return, simply press the keyboard shortcut again, and the rest of your docume
 
 ### Installation
 
-Available on ![Package Control](https://sublime.wbond.net/)
+Available on [Package Control](https://sublime.wbond.net/)
 
 ### Keybindings
 
