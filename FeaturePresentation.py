@@ -5,14 +5,6 @@ region = ''
 text = ''
 
 
-def isView(view_id):
-    if not view_id:
-        return False
-    window = sublime.active_window()
-    view = window.active_view() if window is not None else None
-    return (view is not None and view.id() == view_id)
-
-
 class capture(sublime_plugin.EventListener):
 
     def on_pre_close(self, view):
@@ -53,7 +45,8 @@ class feature_presentation(sublime_plugin.TextCommand):
 
     def run(self, edit):
         # Get selection as region
-        sel = sublime.Region(self.view.sel()[0].begin(), self.view.sel()[0].end())
+        sel = sublime.Region(self.view.sel()[0].begin(),
+                             self.view.sel()[0].end())
 
         # Make things easier later
         view = self.view
@@ -88,5 +81,8 @@ class feature_presentation(sublime_plugin.TextCommand):
         for line in lines:
             text += '%s\n' % self.view.substr(line)
 
-        focus.run_command(
-            'append', {'characters': text, 'force': True, 'scroll_to_end': False})
+        focus.run_command('append', {
+            'characters': text,
+            'force': True,
+            'scroll_to_end': False
+        })
