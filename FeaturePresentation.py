@@ -49,7 +49,7 @@ class fp_replace(sublime_plugin.TextCommand):
         self.view.replace(edit, region, text)
 
 
-class fp_start(sublime_plugin.TextCommand):
+class feature_presentation(sublime_plugin.TextCommand):
 
     def run(self, edit):
         # Get selection as region
