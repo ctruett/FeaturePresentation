@@ -6,13 +6,13 @@ While working with a large document, sometimes I want to focus on a specific por
 
 Enter Feature Presentation.
 
-This plugin allows you to focus on single portion of your document by folding away all of the lines surrounding your selection. To do this, select the portion of your document that you would like to isolate, and press the keyboard shortcut, which is bound to `f8` by default.
+This plugin allows you to focus on single portion of your document.  To activate Feature Presentation, select the portion of your document that you would like to isolate, and press the keyboard shortcut, which is bound to `f8` by default.
 
-To return, simply press the keyboard shortcut again, and the rest of your document will unfold.
+To return, simply close the window, and the changes will be applied to your update.
 
 ### Installation
 
-Available on [Package Control](https://sublime.wbond.net/)
+Available on [Package Control](https://packagecontrol.io/packages/Feature%20Presentation)
 
 ### Keybindings
 
