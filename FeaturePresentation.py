@@ -63,7 +63,7 @@ class feature_presentation(sublime_plugin.TextCommand):
         # Name the view
         focus.set_name('...')
 
-        # Set it as a scratchpad
+        # Set it as a scratchpa
         focus.set_scratch(True)
 
         # Match syntax highlighting
@@ -79,7 +79,10 @@ class feature_presentation(sublime_plugin.TextCommand):
 
         # Populate new view with selection
         for line in lines:
-            text += '%s\n' % self.view.substr(line)
+            if line == lines[-1]:
+                text += '%s' % self.view.substr(line)
+            else:
+                text += '%s\n' % self.view.substr(line)
 
         focus.run_command('append', {
             'characters': text,
