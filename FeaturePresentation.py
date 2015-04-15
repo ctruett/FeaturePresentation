@@ -17,7 +17,7 @@ class capture(sublime_plugin.EventListener):
 
         # Construct a region for the replace we'll use later
         global region
-        region = sublime.Region(sel_start, sel_end - 1)
+        region = sublime.Region(sel_start, sel_end)
 
         # If we're reading a scratch, go ahead and process the changes
         if view.is_scratch() is True:
@@ -80,7 +80,7 @@ class feature_presentation(sublime_plugin.TextCommand):
         # Populate new view with selection
         for line in lines:
             if line == lines[-1]:
-                text += '%s' % self.view.substr(line)
+                text += '%s\n' % self.view.substr(line)
             else:
                 text += '%s\n' % self.view.substr(line)
 
