@@ -2,7 +2,7 @@
 Feature Presentation
 ====================
 
-While working with a large document, sometimes it's necessary to focus on a specific bit of text without minimal distractions. In the past, I would insert line breaks before and after the region I wanted to focus on, but that is both slow and sloppy.
+While working with a large document, sometimes it's necessary to focus on a specific bit of text without any distractions. In the past, I would insert line breaks before and after the region I wanted to focus on, but that is both slow and sloppy.
 
 Enter Feature Presentation.
 
