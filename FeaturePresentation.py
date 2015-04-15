@@ -13,7 +13,8 @@ class capture(sublime_plugin.EventListener):
 
     def on_pre_close(self, view):
 
-        if basicmode is True or False:
+        # Test to see if basic mode is enabled
+        if basicmode is True:
             return
 
         # If we're reading a scratch, go ahead and process the changes
@@ -34,6 +35,7 @@ class capture(sublime_plugin.EventListener):
 class fp_replace(sublime_plugin.TextCommand):
 
     def run(self, edit):
+        # Replace text in original document
         self.view.replace(edit, region, text)
 
 
@@ -41,52 +43,65 @@ class feature_presentation(sublime_plugin.TextCommand):
 
     def run(self, edit):
 
+        # Make thisngs easier later
+        sv = self.view
+
+        # Get selection start and end points
+        sel = sv.sel()[0]
+        sel_start = sv.text_point(sv.rowcol(sel.begin())[0], 0)
+        sel_end = sv.text_point(sv.rowcol(sel.end())[0], 0)
+
+        # Grab contents of fp_basic setting
         global basicmode
-        basicmode = self.view.settings().get("fp_basic")
+        basicmode = sv.settings().get("fp_basic")
 
+        # If basic mode is enabled...
         if basicmode is True:
-            activated = self.view.settings().get('infocus')
 
-            for sel in self.view.sel():
-                regions = []
+            # Get contents of test settings
+            active = sv.settings().get('infocus')
 
-                midpoint = sel.begin() + sel.size() / 2
+            # Prepare storage for folded regions
+            regions = []
 
-                ss = self.view.text_point(self.view.rowcol(sel.begin())[0] - 1, 0)
-                se = self.view.text_point(self.view.rowcol(sel.end())[0] + 1, 0)
+            # Find the midpoint of the selection
+            midpoint = sel.begin() + sel.size() / 2
 
-                tr = sublime.Region(0, ss - 1)
-                br = sublime.Region(se, self.view.size())
+            # Set up top and bottom regions
+            tr = sublime.Region(0, sel_start - 1)
+            br = sublime.Region(sel_end, sv.size())
+            regions = [tr, br]
 
-                regions = [tr, br]
+            # If fp is not activated, activate it!
+            if active is None:
+                sv.fold(regions)
+                sv.settings().set('infocus', True)
 
-                if activated is None:
-                    self.view.fold(regions)
-                    self.view.settings().set('infocus', True)
+            # If fp is not activated, activate it!
+            if active is False:
+                sv.fold(regions)
+                sv.settings().set('infocus', True)
 
-                if activated is False:
-                    self.view.fold(regions)
-                    self.view.settings().set('infocus', True)
+            # If fp is activated, deactivate it!
+            if active is True:
+                sv.unfold(regions)
+                sv.settings().set('infocus', False)
 
-                if activated is True:
-                    self.view.unfold(regions)
-                    self.view.settings().set('infocus', False)
-
-                self.view.show_at_center(midpoint)
+            # Center the screen around the previously isolated region
+            sv.show_at_center(midpoint)
             return
 
         # Store filename
         global file_name
-        file_name = self.view.file_name()
+        file_name = sv.file_name()
 
         # Get selection as region
         global region
-        region = sublime.Region(self.view.sel()[0].begin(),
-                                self.view.sel()[0].end())
+        region = sublime.Region(sel_start, sel_end)
 
         # Store original text
         global otex
-        otex = self.view.substr(region)
+        otex = sv.substr(region)
 
         # Create new view for focused text
         self.clone_text()
@@ -99,7 +114,7 @@ class feature_presentation(sublime_plugin.TextCommand):
         # Name the view
         focus.set_name('...')
 
-        # Set it as a scratchpa
+        # Set view as scratch
         focus.set_scratch(True)
 
         # Match syntax highlighting

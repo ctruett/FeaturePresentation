@@ -35,9 +35,10 @@ to your user preferences.
 
 ### Bugs
 
-* Fold markers move around a little bit when isolating a block of text that has a fold in it 
+None reported at this point. Check back later?
 
 ### Changelog
 
-- **4/15/2015**: Basic mode, which folds the text around your selection instead of creating a new window, can be enabled with `"fp_basic": true`
-- **4/14/2015**: No longer relies on cold folding, so you can't accidentally delete most of your document. When activated, the selected text will load into a new view. When you close this view the changes will be reflected in your original document.
+- **2015-04-15**: Cleaned up and simplified the code, squashed bugs.
+- **2015-04-15**: Basic mode, which folds the text around your selection instead of creating a new window, can be enabled with `"fp_basic": true`
+- **2015-04-14**: No longer relies on cold folding, so you can't accidentally delete most of your document. When activated, the selected text will load into a new view. When you close this view the changes will be reflected in your original document.
