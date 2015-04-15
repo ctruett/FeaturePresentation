@@ -2,6 +2,8 @@
 Feature Presentation
 ====================
 
+![demo](demo.gif)
+
 While working with a large document, sometimes it's necessary to focus on a specific bit of text without any distractions. In the past, I would insert line breaks before and after the region I wanted to focus on, but that is both slow and sloppy.
 
 Enter Feature Presentation.
@@ -10,9 +12,6 @@ This plugin allows you to focus on single portion of your document.  To activate
 
 After editing, close the window and whatever change you made will be applied to your original document.
 
-### Demonstration
-
-![demo](demo.gif)
 
 ### Installation
 
@@ -26,13 +25,14 @@ to your keybindings, changing `alt+i` to whatever you want.
 
 ### Basic mode
 
+![basic mode demo](demo-basic.gif)
+
 Basic mode, which folds the text around your selection instead of creating a new window, can be enabled by adding
 
     "fp_basic": true
 
 to your user preferences.
 
-![basic mode demo](demo-basic.gif)
 
 ### Bugs
 
