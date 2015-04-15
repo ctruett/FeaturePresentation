@@ -10,6 +10,10 @@ This plugin allows you to focus on single portion of your document.  To activate
 
 After editing, close the window and whatever change you made will be applied to your original document.
 
+### Demonstration
+
+![demo](demo.gif)
+
 ### Installation
 
 Available on [Package Control](https://packagecontrol.io/packages/Feature%20Presentation)
