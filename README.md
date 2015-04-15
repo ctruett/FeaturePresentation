@@ -17,3 +17,7 @@ Available on [Package Control](https://packagecontrol.io/packages/Feature%20Pres
 ### Keybindings
 
 Add `{ "keys": ["f8"], "command": "feature_presentation" }` to your keybindings, changing `f8` to whatever you want.
+
+### Bugs to be squashed
+
+* Fold markers move around a little bit when isolating a block of text that has a fold in it 
