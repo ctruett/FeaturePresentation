@@ -20,7 +20,7 @@ Available on [Package Control](https://packagecontrol.io/packages/Feature%20Pres
 
 ### Keybindings
 
-Add `{ "keys": ["alt+i"], "command": "feature_presentation" }` to your keybindings, changing `alt+i to whatever you want.
+Add `{ "keys": ["alt+i"], "command": "feature_presentation" }` to your keybindings, changing `alt+i` to whatever you want.
 
 ### Bugs to be squashed
 
