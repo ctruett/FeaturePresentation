@@ -32,6 +32,8 @@ Basic mode, which folds the text around your selection instead of creating a new
 
 to your user preferences.
 
+![basic mode demo](demo-basic.gif)
+
 ### Bugs
 
 * Fold markers move around a little bit when isolating a block of text that has a fold in it 
