@@ -3,6 +3,7 @@ import sublime_plugin
 
 region = ''
 text = ''
+otex = ''
 
 
 class capture(sublime_plugin.EventListener):
@@ -28,7 +29,6 @@ class capture(sublime_plugin.EventListener):
 
             # Get the old view from our window object, and switch to it
             oldview = sublime.active_window().find_open_file(file_name)
-            sublime.active_window().focus_view(oldview)
 
             # Replace text in original buffer
             oldview.run_command('fp_replace')
@@ -48,14 +48,17 @@ class feature_presentation(sublime_plugin.TextCommand):
         sel = sublime.Region(self.view.sel()[0].begin(),
                              self.view.sel()[0].end())
 
+        global otex
+        otex = self.view.substr(sel)
+
         # Make things easier later
         view = self.view
         offsets = [sel.begin(), sel.end()]
 
         # Create new view for focused text
-        self.clone_text(sel, view.file_name(), offsets)
+        self.clone_text(sel, view.file_name(), offsets, otex)
 
-    def clone_text(self, region, file_name, offsets):
+    def clone_text(self, region, file_name, offsets, otex):
 
         # Create a new view for modifications
         focus = self.view.window().new_file()
@@ -74,18 +77,8 @@ class feature_presentation(sublime_plugin.TextCommand):
         focus.settings().set('sel_start', offsets[0])
         focus.settings().set('sel_end', offsets[1])
 
-        text = ''
-        lines = self.view.lines(region)
-
-        # Populate new view with selection
-        for line in lines:
-            if line == lines[-1]:
-                text += '%s\n' % self.view.substr(line)
-            else:
-                text += '%s\n' % self.view.substr(line)
-
         focus.run_command('append', {
-            'characters': text,
-            'force': True,
+            'characters': otex,
+            'force': False,
             'scroll_to_end': False
         })
