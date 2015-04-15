@@ -13,12 +13,6 @@ class capture(sublime_plugin.EventListener):
         # Get settings from scratchpad view
         settings = view.settings()
         file_name = settings.get('file_name')
-        sel_start = settings.get('sel_start')
-        sel_end = settings.get('sel_end')
-
-        # Construct a region for the replace we'll use later
-        global region
-        region = sublime.Region(sel_start, sel_end)
 
         # If we're reading a scratch, go ahead and process the changes
         if view.is_scratch() is True:
@@ -45,20 +39,20 @@ class feature_presentation(sublime_plugin.TextCommand):
 
     def run(self, edit):
         # Get selection as region
-        sel = sublime.Region(self.view.sel()[0].begin(),
-                             self.view.sel()[0].end())
+        global region
+        region = sublime.Region(self.view.sel()[0].begin(),
+                                self.view.sel()[0].end())
 
         global otex
-        otex = self.view.substr(sel)
+        otex = self.view.substr(region)
 
         # Make things easier later
         view = self.view
-        offsets = [sel.begin(), sel.end()]
 
         # Create new view for focused text
-        self.clone_text(sel, view.file_name(), offsets, otex)
+        self.clone_text(view.file_name())
 
-    def clone_text(self, region, file_name, offsets, otex):
+    def clone_text(self, file_name):
 
         # Create a new view for modifications
         focus = self.view.window().new_file()
@@ -74,8 +68,6 @@ class feature_presentation(sublime_plugin.TextCommand):
 
         # Set up storage variables
         focus.settings().set('file_name', file_name)
-        focus.settings().set('sel_start', offsets[0])
-        focus.settings().set('sel_end', offsets[1])
 
         focus.run_command('append', {
             'characters': otex,
