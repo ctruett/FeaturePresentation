@@ -18,14 +18,6 @@ Available on [Package Control](https://packagecontrol.io/packages/Feature%20Pres
 
 Add `{ "keys": ["f8"], "command": "feature_presentation" }` to your keybindings, changing `f8` to whatever you want.
 
-<<<<<<< HEAD
 ### Bugs to be squashed
-=======
-<<<<<<< HEAD
-### Bugs to be squashed
-=======
-## Bugs to be squashed
->>>>>>> bc4040c3b991e6eb708c5ae8e048a9d5265c6a84
->>>>>>> 08e150ace0a12bf828897bfdf1213e64b2c2ba3a
 
 * Fold markers move around a little bit when isolating a block of text that has a fold in it 
