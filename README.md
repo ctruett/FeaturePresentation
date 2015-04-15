@@ -18,10 +18,20 @@ After editing, close the window and whatever change you made will be applied to 
 
 Available on [Package Control](https://packagecontrol.io/packages/Feature%20Presentation)
 
-### Keybindings
+After installation, add
 
-Add `{ "keys": ["alt+i"], "command": "feature_presentation" }` to your keybindings, changing `alt+i` to whatever you want.
+    { "keys": ["alt+i"], "command": "feature_presentation" }
 
-### Bugs to be squashed
+to your keybindings, changing `alt+i` to whatever you want.
+
+### Basic mode
+
+Basic mode, which folds the text around your selection instead of creating a new window, can be enabled by adding
+
+    "fp_basic": true
+
+to your user preferences.
+
+### Bugs
 
 * Fold markers move around a little bit when isolating a block of text that has a fold in it 
