@@ -17,7 +17,7 @@ class capture(sublime_plugin.EventListener):
 
         # Construct a region for the replace we'll use later
         global region
-        region = sublime.Region(sel_start, sel_end)
+        region = sublime.Region(sel_start, sel_end - 1)
 
         # If we're reading a scratch, go ahead and process the changes
         if view.is_scratch() is True:
@@ -63,7 +63,7 @@ class feature_presentation(sublime_plugin.TextCommand):
         # Name the view
         focus.set_name('...')
 
-        # Set it as a scratchpad
+        # Set it as a scratchpa
         focus.set_scratch(True)
 
         # Match syntax highlighting
@@ -79,7 +79,10 @@ class feature_presentation(sublime_plugin.TextCommand):
 
         # Populate new view with selection
         for line in lines:
-            text += '%s\n' % self.view.substr(line)
+            if line == lines[-1]:
+                text += '%s' % self.view.substr(line)
+            else:
+                text += '%s\n' % self.view.substr(line)
 
         focus.run_command('append', {
             'characters': text,
