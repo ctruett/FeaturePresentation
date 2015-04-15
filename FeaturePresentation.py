@@ -1,6 +1,8 @@
 import sublime
 import sublime_plugin
 
+# Set up storage variables
+file_name = ''
 region = ''
 text = ''
 otex = ''
@@ -10,20 +12,10 @@ class capture(sublime_plugin.EventListener):
 
     def on_pre_close(self, view):
 
-        # Get settings from scratchpad view
-        settings = view.settings()
-        file_name = settings.get('file_name')
-        sel_start = settings.get('sel_start')
-        sel_end = settings.get('sel_end')
-
-        # Construct a region for the replace we'll use later
-        global region
-        region = sublime.Region(sel_start, sel_end)
-
         # If we're reading a scratch, go ahead and process the changes
         if view.is_scratch() is True:
 
-            # Get the string value of the scratchpad's contents
+            # Get the scratchpad's contents
             global text
             text = view.substr(sublime.Region(0, view.size()))
 
@@ -44,21 +36,24 @@ class fp_replace(sublime_plugin.TextCommand):
 class feature_presentation(sublime_plugin.TextCommand):
 
     def run(self, edit):
+
+        # Store filename
+        global file_name
+        file_name = self.view.file_name()
+
         # Get selection as region
-        sel = sublime.Region(self.view.sel()[0].begin(),
-                             self.view.sel()[0].end())
+        global region
+        region = sublime.Region(self.view.sel()[0].begin(),
+                                self.view.sel()[0].end())
 
+        # Store original text
         global otex
-        otex = self.view.substr(sel)
-
-        # Make things easier later
-        view = self.view
-        offsets = [sel.begin(), sel.end()]
+        otex = self.view.substr(region)
 
         # Create new view for focused text
-        self.clone_text(sel, view.file_name(), offsets, otex)
+        self.clone_text()
 
-    def clone_text(self, region, file_name, offsets, otex):
+    def clone_text(self):
 
         # Create a new view for modifications
         focus = self.view.window().new_file()
@@ -72,11 +67,7 @@ class feature_presentation(sublime_plugin.TextCommand):
         # Match syntax highlighting
         focus.set_syntax_file(self.view.settings().get('syntax'))
 
-        # Set up storage variables
-        focus.settings().set('file_name', file_name)
-        focus.settings().set('sel_start', offsets[0])
-        focus.settings().set('sel_end', offsets[1])
-
+        # Append selected text
         focus.run_command('append', {
             'characters': otex,
             'force': False,
