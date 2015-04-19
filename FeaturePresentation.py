@@ -43,7 +43,7 @@ class feature_presentation(sublime_plugin.TextCommand):
 
     def run(self, edit):
 
-        # Make thisngs easier later
+        # Make things easier later
         sv = self.view
 
         # Get selection start and end points
