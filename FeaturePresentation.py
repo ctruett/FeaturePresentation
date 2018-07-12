@@ -1,13 +1,7 @@
 import sublime
 import sublime_plugin
 
-# Set up storage variables
-file_name = ''
-region = ''
-text = ''
-otex = ''
 basicmode = None
-
 
 class capture(sublime_plugin.EventListener):
 
@@ -18,32 +12,48 @@ class capture(sublime_plugin.EventListener):
             return
 
         # If we're reading a scratch, go ahead and process the changes
-        if view.is_scratch() is True:
+        if view.is_scratch() is True and view.settings().has('feature_presentation_initial_view_id'):
 
             # Get the scratchpad's contents
-            global text
             text = view.substr(sublime.Region(0, view.size()))
 
-            # Get the old view from our window object, and switch to it
-            oldview = sublime.active_window().find_open_file(file_name)
+            scratch_view_settings = view.settings()
+
+            # Get the old view by id saved in scratch view settings
+            source_view = list(filter(lambda v: v.id() == scratch_view_settings.get('feature_presentation_initial_view_id'), sublime.active_window().views()))[0]
+
+            source_view_settings = source_view.settings()
+
+            # Copy new text and original region start and end into source view
+            source_view_settings.set('feature_presentation_new_text', text)
+            source_view_settings.set('feature_presentation_original_text_region_start', scratch_view_settings.get('feature_presentation_original_text_region_start'))
+            source_view_settings.set('feature_presentation_original_text_region_end', scratch_view_settings.get('feature_presentation_original_text_region_end'))
 
             # Replace text in original buffer
-            oldview.run_command('fp_replace')
+            source_view.run_command('fp_replace')
             return
 
 
 class fp_replace(sublime_plugin.TextCommand):
 
     def run(self, edit):
+        # Get new text
+        new_text = self.view.settings().get('feature_presentation_new_text')
+
+        # Get original region
+        sel_start = self.view.settings().get('feature_presentation_original_text_region_start')
+        sel_end = self.view.settings().get('feature_presentation_original_text_region_end')
+        region = sublime.Region(sel_start, sel_end)
+
         # Replace text in original document
-        self.view.replace(edit, region, text)
+        self.view.replace(edit, region, new_text)
 
 
 class feature_presentation(sublime_plugin.TextCommand):
 
     def run(self, edit):
 
-        # Make things easier later
+        # Make thisngs easier later
         sv = self.view
 
         # Get selection start and end points
@@ -54,6 +64,9 @@ class feature_presentation(sublime_plugin.TextCommand):
         # Grab contents of fp_basic setting
         global basicmode
         basicmode = sv.settings().get("fp_basic")
+
+        # Get id of initial view
+        source_id = sv.id()
 
         # If basic mode is enabled...
         if basicmode is True:
@@ -91,25 +104,16 @@ class feature_presentation(sublime_plugin.TextCommand):
             sv.show_at_center(midpoint)
             return
 
-        # Store filename
-        global file_name
-        file_name = sv.file_name()
-
-        # Get selection as region
-        global region
-        region = sublime.Region(sel_start, sel_end)
-
-        # Store original text
-        global otex
-        otex = sv.substr(region)
-
         # Create new view for focused text
         self.clone_text()
 
     def clone_text(self):
 
+        # Make things easier later
+        sv = self.view
+
         # Create a new view for modifications
-        focus = self.view.window().new_file()
+        focus = sv.window().new_file()
 
         # Name the view
         focus.set_name('...')
@@ -118,7 +122,20 @@ class feature_presentation(sublime_plugin.TextCommand):
         focus.set_scratch(True)
 
         # Match syntax highlighting
-        focus.set_syntax_file(self.view.settings().get('syntax'))
+        focus.set_syntax_file(sv.settings().get('syntax'))
+
+        # Store original view's id in new view
+        focus.settings().set('feature_presentation_initial_view_id', sv.id())
+
+        # Store original view's selected text and region into new view's settings
+        sel = sv.sel()[0]
+        sel_start = sv.text_point(sv.rowcol(sel.begin())[0], 0)
+        sel_end = sv.text_point(sv.rowcol(sel.end())[0], 0)
+        region = sublime.Region(sel_start, sel_end)
+        otex = sv.substr(region)
+        focus.settings().set('feature_presentation_original_text', otex)
+        focus.settings().set('feature_presentation_original_text_region_start', sel_start)
+        focus.settings().set('feature_presentation_original_text_region_end', sel_end)
 
         # Append selected text
         focus.run_command('append', {
