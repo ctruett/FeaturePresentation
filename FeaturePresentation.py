@@ -127,12 +127,11 @@ class feature_presentation(sublime_plugin.TextCommand):
         # Store original view's id in new view
         focus.settings().set('feature_presentation_initial_view_id', sv.id())
 
-        # Store original view's selected text and region into new view's settings
+        # Store original view's selected text and region start/end into new view's settings
         sel = sv.sel()[0]
-        sel_start = sv.text_point(sv.rowcol(sel.begin())[0], 0)
-        sel_end = sv.text_point(sv.rowcol(sel.end())[0], 0)
-        region = sublime.Region(sel_start, sel_end)
-        otex = sv.substr(region)
+        sel_start = sel.begin() #sv.text_point(sv.rowcol(sel.begin())[0], 0)
+        sel_end = sel.end() #sv.text_point(sv.rowcol(sel.end())[0], 0)
+        otex = sv.substr(sel)
         focus.settings().set('feature_presentation_original_text', otex)
         focus.settings().set('feature_presentation_original_text_region_start', sel_start)
         focus.settings().set('feature_presentation_original_text_region_end', sel_end)
