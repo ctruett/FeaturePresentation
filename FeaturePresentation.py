@@ -19,6 +19,13 @@ class capture(sublime_plugin.EventListener):
 
             scratch_view_settings = view.settings()
 
+            # Check if this is the last scratch view for the same initial view
+            # If it isn't: show a message saying that text could not be copied (due to problem with changing regions if length of text is changed)
+            viewsWithHigherIndex = list(filter(lambda v: v.settings().get('feature_presentation_initial_view_id') == scratch_view_settings.get('feature_presentation_initial_view_id') and scratch_view_settings.get('feature_presentation_index') < v.settings().get('feature_presentation_index'), sublime.active_window().views()))
+            if len(viewsWithHigherIndex) > 0:
+                sublime.message_dialog("Not inserting text because this is not the last scratch view")
+                return
+
             # Get the old view by id saved in scratch view settings
             source_view = list(filter(lambda v: v.id() == scratch_view_settings.get('feature_presentation_initial_view_id'), sublime.active_window().views()))[0]
 
@@ -112,33 +119,41 @@ class feature_presentation(sublime_plugin.TextCommand):
         # Make things easier later
         sv = self.view
 
-        # Create a new view for modifications
-        focus = sv.window().new_file()
+        for idx, sel in enumerate(sv.sel()):
 
-        # Name the view
-        focus.set_name('...')
+            # Create a new view for modifications
+            focus = sv.window().new_file()
 
-        # Set view as scratch
-        focus.set_scratch(True)
+            # Name the view
+            focus.set_name('...' + str(idx))
 
-        # Match syntax highlighting
-        focus.set_syntax_file(sv.settings().get('syntax'))
+            # Set view as scratch
+            focus.set_scratch(True)
 
-        # Store original view's id in new view
-        focus.settings().set('feature_presentation_initial_view_id', sv.id())
+            # Match syntax highlighting
+            focus.set_syntax_file(sv.settings().get('syntax'))
 
-        # Store original view's selected text and region start/end into new view's settings
-        sel = sv.sel()[0]
-        sel_start = sel.begin() #sv.text_point(sv.rowcol(sel.begin())[0], 0)
-        sel_end = sel.end() #sv.text_point(sv.rowcol(sel.end())[0], 0)
-        otex = sv.substr(sel)
-        focus.settings().set('feature_presentation_original_text', otex)
-        focus.settings().set('feature_presentation_original_text_region_start', sel_start)
-        focus.settings().set('feature_presentation_original_text_region_end', sel_end)
+            # New view's settings
+            new_settings = focus.settings()
 
-        # Append selected text
-        focus.run_command('append', {
-            'characters': otex,
-            'force': False,
-            'scroll_to_end': False
-        })
+            # Store original view's id in new view
+            new_settings.set('feature_presentation_initial_view_id', sv.id())
+            new_settings.set('feature_presentation_index', idx)
+
+            # Store original view's selected text and region start/end into new view's settings
+            sel_start = sel.begin() #sv.text_point(sv.rowcol(sel.begin())[0], 0)
+            sel_end = sel.end() #sv.text_point(sv.rowcol(sel.end())[0], 0)
+            otex = sv.substr(sel)
+            new_settings.set('feature_presentation_original_text', otex)
+            new_settings.set('feature_presentation_original_text_region_start', sel_start)
+            new_settings.set('feature_presentation_original_text_region_end', sel_end)
+
+            # Append selected text
+            focus.run_command('append', {
+                'characters': otex,
+                'force': False,
+                'scroll_to_end': False
+            })
+
+        # Clear selection
+        sv.sel().clear()
